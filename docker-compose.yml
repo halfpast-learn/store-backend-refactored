@@ -1,0 +1,283 @@
+version: '3.8'
+
+services:
+  # Database services
+  postgres-item:
+    image: postgres:16
+    container_name: postgres-item
+    restart: always
+    environment:
+      POSTGRES_DB: item_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_item_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-image:
+    image: postgres:16
+    container_name: postgres-image
+    restart: always
+    environment:
+      POSTGRES_DB: image_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_image_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-opinion:
+    image: postgres:16
+    container_name: postgres-opinion
+    restart: always
+    environment:
+      POSTGRES_DB: opinion_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_opinion_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-order:
+    image: postgres:16
+    container_name: postgres-order
+    restart: always
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_order_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-preference:
+    image: postgres:16
+    container_name: postgres-preference
+    restart: always
+    environment:
+      POSTGRES_DB: preference_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_preference_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-tag:
+    image: postgres:16
+    container_name: postgres-tag
+    restart: always
+    environment:
+      POSTGRES_DB: tag_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres_tag_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-user:
+    image: postgres:16
+    container_name: postgres-user
+    restart: always
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Service containers
+  itemservice:
+    build:
+      context: .
+      dockerfile: itemservice/Dockerfile
+    container_name: itemservice
+    restart: always
+    depends_on:
+      postgres-item:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-item:5432/item_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+  imageservice:
+    build:
+      context: .
+      dockerfile: imageservice/Dockerfile
+    container_name: imageservice
+    restart: always
+    depends_on:
+      postgres-image:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-image:5432/image_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+  opinionservice:
+    build:
+      context: .
+      dockerfile: opinionservice/Dockerfile
+    container_name: opinionservice
+    restart: always
+    depends_on:
+      postgres-opinion:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-opinion:5432/opinion_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+  orderservice:
+    build:
+      context: .
+      dockerfile: orderservice/Dockerfile
+    container_name: orderservice
+    restart: always
+    depends_on:
+      postgres-order:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-order:5432/order_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+  preferenceservice:
+    build:
+      context: .
+      dockerfile: preferenceservice/Dockerfile
+    container_name: preferenceservice
+    restart: always
+    depends_on:
+      postgres-preference:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-preference:5432/preference_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+  tagservice:
+    build:
+      context: .
+      dockerfile: tagservice/Dockerfile
+    container_name: tagservice
+    restart: always
+    depends_on:
+      postgres-tag:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-tag:5432/tag_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+  usermanagementservice:
+    build:
+      context: .
+      dockerfile: usermanagementservice/Dockerfile
+    container_name: usermanagementservice
+    restart: always
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-user:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  postgres_item_data:
+  postgres_image_data:
+  postgres_opinion_data:
+  postgres_order_data:
+  postgres_preference_data:
+  postgres_tag_data:
+  postgres_user_data: 
