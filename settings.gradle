@@ -1,0 +1,6 @@
+rootProject.name = 'store-backend-java'
+
+include 'common'
+include 'itemservice'
+
+project(':itemservice').projectDir = file('itemservice')
