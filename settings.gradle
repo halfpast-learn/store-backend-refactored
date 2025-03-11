@@ -2,5 +2,17 @@ rootProject.name = 'store-backend-java'
 
 include 'common'
 include 'itemservice'
+include 'imageservice'
+include 'opinionservice'
+include 'orderservice'
+include 'preferenceservice'
+include 'tagservice'
+include 'usermanagementservice'
 
 project(':itemservice').projectDir = file('itemservice')
+project(':imageservice').projectDir = file('imageservice')
+project(':opinionservice').projectDir = file('opinionservice')
+project(':orderservice').projectDir = file('orderservice')
+project(':preferenceservice').projectDir = file('preferenceservice')
+project(':tagservice').projectDir = file('tagservice')
+project(':usermanagementservice').projectDir = file('usermanagementservice')
